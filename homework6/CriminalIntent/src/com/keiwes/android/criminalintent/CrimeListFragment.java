@@ -2,9 +2,9 @@ package com.keiwes.android.criminalintent;
 
 import java.util.ArrayList;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -13,9 +13,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class CrimeListFragment extends ListFragment {
-
-	private static final String TAG = "CrimeListFragment";
-
 	private ArrayList<Crime> mCrimes;
 
 	@Override
@@ -27,10 +24,18 @@ public class CrimeListFragment extends ListFragment {
 		setListAdapter(adapter);
 	}
 
-	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		Crime c = (Crime) (getListAdapter()).getItem(position);
-		Log.d(TAG, c.getTitle() + " was clicked");
+		// get the Crime from the adapter
+		Crime c = ((CrimeAdapter) getListAdapter()).getItem(position);
+		// start an instance of CrimeActivity
+		Intent i = new Intent(getActivity(), CrimeActivity.class);
+		i.putExtra(CrimeFragment.EXTRA_CRIME_ID, c.getId());
+		startActivityForResult(i, 0);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		((CrimeAdapter) getListAdapter()).notifyDataSetChanged();
 	}
 
 	private class CrimeAdapter extends ArrayAdapter<Crime> {
@@ -40,12 +45,13 @@ public class CrimeListFragment extends ListFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-
+			// if we weren't given a view, inflate one
 			if (null == convertView) {
 				convertView = getActivity().getLayoutInflater().inflate(
 						R.layout.list_item_crime, null);
 			}
 
+			// configure the view for this Crime
 			Crime c = getItem(position);
 
 			TextView titleTextView = (TextView) convertView
@@ -61,5 +67,4 @@ public class CrimeListFragment extends ListFragment {
 			return convertView;
 		}
 	}
-
 }
