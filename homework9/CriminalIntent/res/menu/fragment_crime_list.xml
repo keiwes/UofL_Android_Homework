@@ -5,4 +5,3 @@
     android:title="@string/new_crime"
     android:showAsAction="ifRoom|withText"/>
 </menu>
-
